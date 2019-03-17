@@ -1,9 +1,7 @@
 Zozor's Blog
 ============
 
-The Zozor's Blog is an application used a learning support for the Symfony 4 course available in OpenClassRooms platform.
-The entire application is based on the []Symfony Demo Application](https://github.com/symfony/demo), which is a reference application created to show how
-to develop Symfony applications following the recommended best practices.
+Symfony 4 course at OpenClassrooms
 
 Requirements
 ------------
@@ -15,21 +13,34 @@ Requirements
 Installation
 ------------
 
-Execute this command to install the project:
+Clone the project to download its contents :
 
 ```bash
-$ composer create-project mickaelandrieu/learn-symfony
+$ git clone https://github.com/Rantignac/Zozor-blog.git
+$ cd zozor-blog/
 ```
+Installing the dependancies: 
 
-Usage
------
+```bash
+$ composer install
+```
+Create the database:
+
+```bash
+$ php bin/console doctrine:database:create
+$ php bin/console doctrine:schema:create
+```
+Load demo info into database:
+
+```bash
+$ php bin/console doctrine:fixtures:load
+```
 
 There's no need to configure anything to run the application. Just execute this
 command to run the built-in web server and access the application in your
 browser at <http://localhost:8000>:
 
 ```bash
-$ cd learn-symfony/
 $ php bin/console server:run
 ```
 
@@ -42,7 +53,6 @@ Tests
 Execute this command to run tests:
 
 ```bash
-$ cd symfony-demo/
 $ ./vendor/bin/simple-phpunit
 ```
 
