@@ -6,10 +6,10 @@ use App\Entity\Post;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use App\Utils\Slugger;
+use Doctrine\Common\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,6 +22,15 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BlogController extends AbstractController
 {
+    private $em;
+    private $repository;
+
+    public function __construct(ObjectManager $em, PostRepository $repository)
+    {
+        $this->em = $em;
+        $this->repository = $repository;
+    }
+
     /**
      * Lists all Post entities.
      *
@@ -54,7 +63,20 @@ class BlogController extends AbstractController
      */
     public function new(Request $request): Response
     {
-        // @todo: manage the form and the post.
+        $post = new Post();
+        $form = $this->createForm(PostType::class, $post);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $post->setAuthor($this->getUser());
+            $this->em->persist($post);
+            $this->em->flush();
+            $this->addFlash('success', 'post.created_successfully');
+
+            return $this->redirectToRoute('admin_index');
+        }
 
         return $this->render('admin/blog/new.html.twig', [
             'post' => $post,
@@ -70,6 +92,8 @@ class BlogController extends AbstractController
     public function show(Post $post): Response
     {
         // @todo: render the template with the post
+        return $this->render('admin/blog/show.html.twig', [
+            'post' => $post, ]);
     }
 
     /**
@@ -86,13 +110,19 @@ class BlogController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $post->setSlug(Slugger::slugify($post->getTitle()));
             // @todo: persist the update
+            $this->em->flush();
 
             $this->addFlash('success', 'post.updated_successfully');
 
-            return $this->redirectToRoute('admin_post_edit', ['id' => $post->getId()]);
+            return $this->redirectToRoute('admin_post_edit', [
+                'id' => $post->getId(), ]);
         }
 
         // @todo rendrer the post and form
+        return $this->render('admin/blog/edit.html.twig', [
+            'post' => $post,
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -113,6 +143,8 @@ class BlogController extends AbstractController
         $post->getTags()->clear();
 
         // @todo: delete the post
+        $this->em->remove($post);
+        $this->em->flush();
 
         $this->addFlash('success', 'post.deleted_successfully');
 

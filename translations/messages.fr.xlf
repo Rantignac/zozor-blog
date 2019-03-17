@@ -198,6 +198,10 @@
                 <source>label.content</source>
                 <target>Contenu</target>
             </trans-unit>
+            <trans-unit id="label.slug">
+                <source>label.slug</source>
+                <target>Route</target>
+                </trans-unit>
             <trans-unit id="label.summary">
                 <source>label.summary</source>
                 <target>Résumé</target>

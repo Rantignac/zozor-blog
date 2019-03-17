@@ -34,6 +34,10 @@ class PostType extends AbstractType
                 'attr' => ['autofocus' => true],
                 'label' => 'label.title',
             ])
+            ->add('slug', null, [
+                'attr' => ['autofocus' => true],
+                'label' => 'label.slug',
+            ])
             ->add('summary', TextareaType::class, [
                 'help' => 'Summaries can\'t contain Markdown or HTML contents; only plain text.',
                 'label' => 'label.summary',
