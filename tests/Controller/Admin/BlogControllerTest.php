@@ -71,6 +71,7 @@ class BlogControllerTest extends WebTestCase
     public function testAdminNewPost()
     {
         $postTitle = 'Blog Post Title '.mt_rand();
+        $postSlug = $this->generateRandomString(5);
         $postSummary = $this->generateRandomString(255);
         $postContent = $this->generateRandomString(1024);
 
@@ -82,6 +83,7 @@ class BlogControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Create post')->form([
             'post[title]' => $postTitle,
+            'post[slug]' => $postSlug,
             'post[summary]' => $postSummary,
             'post[content]' => $postContent,
         ]);
@@ -93,6 +95,7 @@ class BlogControllerTest extends WebTestCase
             'title' => $postTitle,
         ]);
         self::assertNotNull($post);
+        self::assertSame($postSlug, $post->getSlug());
         self::assertSame($postSummary, $post->getSummary());
         self::assertSame($postContent, $post->getContent());
     }
